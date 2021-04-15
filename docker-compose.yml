@@ -1,0 +1,26 @@
+version: '3'
+services:
+  app:
+    build: .
+    container_name: fbgameapi-ddd
+    volumes:
+      - ./:/src
+    ports:
+      - "8030:8080"
+    depends_on:
+      - mysql-8
+
+  mysql-8:
+    image: mysql:8.0
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: fbgame
+      MYSQL_PASSWORD: 1234
+
+volumes:
+  db_data: {}
