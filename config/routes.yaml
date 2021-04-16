@@ -1,15 +1,19 @@
-#index:
-#    path: /
-#    controller: App\Controller\DefaultController::index
-
-api:
-  path: /api
-  methods: [ GET,POST ]
-
+# User routes
 login:
   path: /login
   methods: [ POST ]
 
 register:
   path: /register
+  controller: App\Controller\Player\RegisterPlayerController::register
   methods: [ POST ]
+
+getById:
+  path: /api/user/{id}
+  controller: App\Controller\Player\GetPlayerController::getById
+  methods: [ GET ]
+
+updateUser:
+  path: /api/user/{id}
+  controller: App\Controller\Player\UpdatePlayerController::update
+  methods: [ PUT ]

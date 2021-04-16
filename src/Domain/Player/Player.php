@@ -3,13 +3,17 @@
 namespace App\Domain\Player;
 
 use App\Infrastructure\Repository\PlayerRepository;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=PlayerRepository::class)
+ * @UniqueEntity(fields={"username"})
  */
 class Player implements UserInterface
 {
@@ -18,47 +22,52 @@ class Player implements UserInterface
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private int $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
      */
-    private $username;
+    private string $username;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
+     * @Assert\Length(min=4, max=255)
      */
-    private $password;
+    private string $password;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $isActive;
+    private bool $isActive;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $point;
+    private int $point;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
+     * @Assert\Email()
+     */
+    private string $email;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $email;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $avatar;
+    private string $avatar;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    private $createdAt;
+    private DateTimeInterface $createdAt;
 
     /**
      * @ORM\OneToMany(targetEntity=Guess::class, mappedBy="player")
      */
-    private $guesses;
+    private Collection $guesses;
 
     public function __construct()
     {
@@ -142,12 +151,12 @@ class Player implements UserInterface
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    public function getCreatedAt(): ?DateTimeInterface
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    public function setCreatedAt(DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
 
