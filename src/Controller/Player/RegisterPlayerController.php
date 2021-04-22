@@ -2,7 +2,7 @@
 
 namespace App\Controller\Player;
 
-use App\Application\PlayerHandler;
+use App\Application\Handler\PlayerHandler;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -31,7 +31,7 @@ class RegisterPlayerController extends AbstractController
         $playerArray = json_decode($request->getContent(), true);
 
         try {
-            $errors = $this->handler->handleRegister(
+            $player = $this->handler->handlerRegister(
                 [
                     'username' => $playerArray['username'],
                     'email' => $playerArray['email'],
@@ -39,14 +39,10 @@ class RegisterPlayerController extends AbstractController
                     'password' => $playerArray['password'],
                 ]
             );
-
-            if ($errors) {
-                return $this->json($errors);
-            }
         } catch (Exception $ex) {
             return new JsonResponse($ex->getMessage());
         }
 
-        return new JsonResponse('Player created!');
+        return new JsonResponse($player);
     }
 }

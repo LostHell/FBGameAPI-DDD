@@ -2,7 +2,7 @@
 
 namespace App\Controller\Player;
 
-use App\Application\PlayerHandler;
+use App\Application\Handler\PlayerHandler;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -22,6 +22,21 @@ class GetPlayerController extends AbstractController
     }
 
     /**
+     * @return Response
+     * @throws Exception
+     */
+    public function getAllPlayers(): Response
+    {
+        try {
+            $players = $this->handler->handlerGetAllPlayers();
+        } catch (Exception $ex) {
+            throw new Exception($ex->getMessage());
+        }
+
+        return new JsonResponse($players->toArray());
+    }
+
+    /**
      * @param int $id
      * @return Response
      * @throws Exception
@@ -29,7 +44,7 @@ class GetPlayerController extends AbstractController
     public function getById(int $id): Response
     {
         try {
-            $player = $this->handler->handleGetById($id);
+            $player = $this->handler->handlerGetById($id);
         } catch (Exception $ex) {
             throw new Exception($ex->getMessage());
         }

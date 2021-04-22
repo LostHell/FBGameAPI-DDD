@@ -2,7 +2,7 @@
 
 namespace App\Controller\Player;
 
-use App\Application\PlayerHandler;
+use App\Application\Handler\PlayerHandler;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -29,19 +29,19 @@ class UpdatePlayerController extends AbstractController
         $playerArray = json_decode($request->getContent(), true);
 
         try {
-            $player = $this->handler->handleGetById($id);
+            $player = $this->handler->handlerGetById($id);
 
-
-            $userData = array_merge($player, [
+            $playerData = array_merge($player, [
                 'username' => $playerArray['username'],
                 'email' => $playerArray['email'],
                 'avatar' => $playerArray['avatar'],
                 'password' => $playerArray['password'],
             ]);
+
         } catch (Exception $ex) {
             throw new Exception($ex->getMessage());
         }
 
-        return new JsonResponse($userData);
+        return new JsonResponse($playerData);
     }
 }

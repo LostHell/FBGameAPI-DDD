@@ -8,12 +8,17 @@ register:
   controller: App\Controller\Player\RegisterPlayerController::register
   methods: [ POST ]
 
+getAllPlayers:
+  path: /api/player
+  controller: App\Controller\Player\GetPlayerController::getAllPlayers
+  methods: [ GET ]
+
 getById:
-  path: /api/user/{id}
+  path: /api/player/{id}
   controller: App\Controller\Player\GetPlayerController::getById
   methods: [ GET ]
 
-updateUser:
-  path: /api/user/{id}
+updatePlayer:
+  path: /api/player/{id}
   controller: App\Controller\Player\UpdatePlayerController::update
   methods: [ PUT ]
