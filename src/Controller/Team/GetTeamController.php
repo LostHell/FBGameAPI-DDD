@@ -6,14 +6,9 @@ use App\Application\Handler\TeamHandler;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * Class CreateTeamController
- * @package App\Controller\Team
- */
-class CreateTeamController extends AbstractController
+class GetTeamController extends AbstractController
 {
     private TeamHandler $handler;
 
@@ -23,25 +18,33 @@ class CreateTeamController extends AbstractController
     }
 
     /**
-     * @param Request $request
      * @return Response
      * @throws Exception
      */
-    public function create(Request $request): Response
+    public function getAllTeams(): Response
     {
-        $team = json_decode($request->getContent(), true);
-
         try {
-            $newTeam = $this->handler->handlerCreateTeam(
-                [
-                    'name' => $team['name'],
-                    'logo' => $team['logo']
-                ]
-            );
+            $teams = $this->handler->handlerGetAllTeams();
         } catch (Exception $ex) {
             throw new Exception($ex->getMessage());
         }
 
-        return new JsonResponse($newTeam);
+        return new JsonResponse($teams->toArray());
+    }
+
+    /**
+     * @param int $id
+     * @return Response
+     * @throws Exception
+     */
+    public function getTeamById(int $id): Response
+    {
+        try {
+            $team = $this->handler->handlerGetById($id);
+        } catch (Exception $ex) {
+            throw new Exception($ex->getMessage());
+        }
+
+        return new JsonResponse($team);
     }
 }

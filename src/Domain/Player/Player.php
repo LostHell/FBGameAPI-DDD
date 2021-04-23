@@ -56,6 +56,7 @@ class Player implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
      */
     private string $avatar;
 

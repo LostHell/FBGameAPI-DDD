@@ -22,3 +22,19 @@ updatePlayer:
   path: /api/player/{id}
   controller: App\Controller\Player\UpdatePlayerController::update
   methods: [ PUT ]
+
+# Team routes
+getAllTeams:
+  path: /api/team
+  controller: App\Controller\Team\GetTeamController::getAllTeams
+  methods: [ GET ]
+
+getTeamById:
+  path: /api/team/{id}
+  controller: App\Controller\Team\GetTeamController::getTeamById
+  methods: [ GET ]
+
+createTeam:
+  path: /api/team
+  controller: App\Controller\Team\CreateTeamController::create
+  methods: [ POST ]

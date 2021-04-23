@@ -2,8 +2,10 @@
 
 namespace App\Application\Handler;
 
+use App\Application\ErrorHandler\ErrorHandler;
 use App\Domain\Team\Team;
 use App\Infrastructure\Repository\TeamRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -11,14 +13,41 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class TeamHandler
 {
     private TeamRepository $teamRepository;
-    private ValidatorInterface $validator;
+
+    private ErrorHandler $errorHandler;
 
     public function __construct(
         TeamRepository $teamRepository,
-        ValidatorInterface $validator)
+        ErrorHandler $errorHandler)
     {
         $this->teamRepository = $teamRepository;
-        $this->validator = $validator;
+        $this->errorHandler = $errorHandler;
+    }
+
+    /**
+     * @return ArrayCollection
+     * @throws Exception
+     */
+    public function handlerGetAllTeams(): ArrayCollection
+    {
+        try {
+            $teams = $this->teamRepository->findAll();
+        } catch (Exception $ex) {
+            throw new Exception($ex->getMessage());
+        }
+
+        $data = new ArrayCollection();
+
+        foreach ($teams as $team) {
+            $data->add(
+                [
+                    'name' => $team->getName(),
+                    'logo' => $team->getLogo()
+                ]
+            );
+        }
+
+        return $data;
     }
 
     /**
@@ -42,16 +71,17 @@ class TeamHandler
 
     /**
      * @param array $teamArray
-     * @return array|ConstraintViolationListInterface
+     * @return array
      * @throws Exception
      */
-    public function handlerCreateTeam(array $teamArray)
+    public function handlerCreateTeam(array $teamArray): array
     {
         $team = new Team();
+
         $team->setName($teamArray['name']);
         $team->setLogo($teamArray['logo']);
 
-        $errors = $this->validator->validate($team);
+        $errors = $this->errorHandler->validate($team);
 
         if ($errors) {
             return $errors;

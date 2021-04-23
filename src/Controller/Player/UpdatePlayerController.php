@@ -29,13 +29,10 @@ class UpdatePlayerController extends AbstractController
         $playerArray = json_decode($request->getContent(), true);
 
         try {
-            $player = $this->handler->handlerGetById($id);
-
-            $playerData = array_merge($player, [
-                'username' => $playerArray['username'],
-                'email' => $playerArray['email'],
-                'avatar' => $playerArray['avatar'],
-                'password' => $playerArray['password'],
+            $playerData = $this->handler->handlerUpdate($id, [
+                "username" => $playerArray['username'],
+                "email" => $playerArray['email'],
+                "avatar" => $playerArray['avatar']
             ]);
 
         } catch (Exception $ex) {

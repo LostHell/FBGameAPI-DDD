@@ -2,31 +2,31 @@
 
 namespace App\Application\Handler;
 
+use App\Application\ErrorHandler\ErrorHandler;
 use App\Domain\Player\Player;
 use App\Infrastructure\Repository\PlayerRepository;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class PlayerHandler
 {
     private PlayerRepository $playerRepository;
 
-    private ValidatorInterface $validator;
-
     private UserPasswordEncoderInterface $encoder;
+
+    private ErrorHandler $errorHandler;
 
     public function __construct(
         PlayerRepository $playerRepository,
-        ValidatorInterface $validator,
-        UserPasswordEncoderInterface $encoder
+        UserPasswordEncoderInterface $encoder,
+        ErrorHandler $errorHandler
     )
     {
         $this->playerRepository = $playerRepository;
-        $this->validator = $validator;
         $this->encoder = $encoder;
+        $this->errorHandler = $errorHandler;
     }
 
     /**
@@ -51,7 +51,7 @@ class PlayerHandler
                     'point' => $player->getPoint(),
                     'isActive' => $player->getIsActive(),
                     'avatar' => $player->getAvatar(),
-                    'createdAt' => $player->getCreatedAt()
+                    'createdAt' => $player->getCreatedAt()->format('d-M-Y')
                 ]
             );
         }
@@ -78,7 +78,7 @@ class PlayerHandler
             'point' => $player->getPoint(),
             'isActive' => $player->getIsActive(),
             'avatar' => $player->getAvatar(),
-            'createdAt' => $player->getCreatedAt()
+            'createdAt' => $player->getCreatedAt()->format('d-M-Y')
         ];
     }
 
@@ -90,6 +90,7 @@ class PlayerHandler
     public function handlerRegister(array $playerArray): array
     {
         $player = new Player();
+
         $player->setUsername($playerArray['username']);
         $player->setEmail($playerArray['email']);
         $player->setPoint(0);
@@ -100,20 +101,10 @@ class PlayerHandler
             $this->encoder->encodePassword($player, $playerArray['password'])
         );
 
-        $errors = $this->validator->validate($player);
+        $errors = $this->errorHandler->validate($player);
 
-        if (count($errors) > 0) {
-            $errorsArray = [];
-
-            for ($i = 0; $i < $errors->count(); $i++) {
-                $errorsArray[$i] = [
-                    'message' => $errors->get($i)->getMessage(),
-                    'parameters' => "Invalid parameter:" . ' ' . $errors->get($i)->getPropertyPath(),
-                    'value' => "Invalid value:" . ' ' . $errors->get($i)->getInvalidValue()
-                ];
-            }
-
-            return $errorsArray;
+        if ($errors) {
+            return $errors;
         }
 
         try {
@@ -140,10 +131,16 @@ class PlayerHandler
     public function handlerUpdate(int $id, array $playerData): array
     {
         $currentPlayer = $this->playerRepository->findOneBy(['id' => $id]);
+
         $currentPlayer->setUsername($playerData['username']);
         $currentPlayer->setEmail($playerData['email']);
         $currentPlayer->setAvatar($playerData['avatar']);
-        $currentPlayer->setPassword($playerData['password']);
+
+        $errors = $this->errorHandler->validate($currentPlayer);
+
+        if ($errors) {
+            return $errors;
+        }
 
         try {
             $this->playerRepository->save($currentPlayer);
@@ -152,10 +149,9 @@ class PlayerHandler
         }
 
         return [
-            'username' => $player['username'],
-            'email' => $player['email'],
-            'avatar' => $player['avatar'],
-            'password' => $player['password']
+            'username' => $currentPlayer->getUsername(),
+            'email' => $currentPlayer->getEmail(),
+            'avatar' => $currentPlayer->getAvatar()
         ];
     }
 }
