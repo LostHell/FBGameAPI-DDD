@@ -7,8 +7,6 @@ use App\Domain\Team\Team;
 use App\Infrastructure\Repository\TeamRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
-use Symfony\Component\Validator\ConstraintViolationListInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class TeamHandler
 {
@@ -96,6 +94,58 @@ class TeamHandler
         return [
             'name' => $team->getName(),
             'logo' => $team->getLogo()
+        ];
+    }
+
+    /**
+     * @param int $id
+     * @param array $teamData
+     * @return array
+     * @throws Exception
+     */
+    public function handlerUpdateTeam(int $id, array $teamData): array
+    {
+        $currentTeam = $this->teamRepository->findOneBy(['id' => $id]);
+
+        $currentTeam->setName($teamData['name']);
+        $currentTeam->setLogo($teamData['logo']);
+
+        $errors = $this->errorHandler->validate($currentTeam);
+
+        if ($errors) {
+            return $errors;
+        }
+
+        try {
+            $this->teamRepository->save($currentTeam);
+        } catch (Exception $ex) {
+            throw new Exception($ex->getMessage());
+        }
+
+        return [
+            'name' => $currentTeam->getName(),
+            'logo' => $currentTeam->getLogo()
+        ];
+    }
+
+    /**
+     * @param int $id
+     * @return array
+     * @throws Exception
+     */
+    public function handlerDeleteTeam(int $id): array
+    {
+        $currentTeam = $this->teamRepository->findOneBy(['id' => $id]);
+
+        try {
+            $this->teamRepository->remove($currentTeam);
+        } catch (Exception $ex) {
+            throw new Exception($ex->getMessage());
+        }
+
+        return [
+            'name' => $currentTeam->getName(),
+            'logo' => $currentTeam->getLogo()
         ];
     }
 }

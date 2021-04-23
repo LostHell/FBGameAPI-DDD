@@ -7,9 +7,12 @@ use App\Infrastructure\Repository\TeamRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=TeamRepository::class)
+ * @UniqueEntity(fields={"name"})
  */
 class Team
 {
@@ -18,27 +21,30 @@ class Team
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private int $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
+     * @Assert\Length(min=4, max=255)
      */
-    private $name;
+    private string $name;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
      */
-    private $logo;
+    private string $logo;
 
     /**
      * @ORM\OneToMany(targetEntity=Game::class, mappedBy="homeTeam")
      */
-    private $homeTeam;
+    private Collection $homeTeam;
 
     /**
      * @ORM\OneToMany(targetEntity=Game::class, mappedBy="awayTeam")
      */
-    private $awayTeam;
+    private Collection $awayTeam;
 
     public function __construct()
     {
@@ -111,6 +117,4 @@ class Team
 
         return $this;
     }
-
-
 }

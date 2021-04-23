@@ -25,4 +25,15 @@ class TeamRepository extends ServiceEntityRepository
         $this->_em->persist($team);
         $this->_em->flush();
     }
+
+    /**
+     * @param Team $team
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function remove(Team $team)
+    {
+        $this->_em->remove($team);
+        $this->_em->flush();
+    }
 }
