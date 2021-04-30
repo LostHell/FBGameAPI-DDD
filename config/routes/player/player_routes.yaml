@@ -1,0 +1,23 @@
+login:
+  path: /login
+  methods: [ POST ]
+
+register:
+  path: /register
+  controller: App\Controller\Player\RegisterPlayerController::register
+  methods: [ POST ]
+
+getAllPlayers:
+  path: /api/player
+  controller: App\Controller\Player\GetPlayerController::getAllPlayers
+  methods: [ GET ]
+
+getById:
+  path: /api/player/{id}
+  controller: App\Controller\Player\GetPlayerController::getById
+  methods: [ GET ]
+
+updatePlayer:
+  path: /api/player/{id}
+  controller: App\Controller\Player\UpdatePlayerController::update
+  methods: [ PUT ]

@@ -1,0 +1,24 @@
+getAllTeams:
+  path: /api/team
+  controller: App\Controller\Team\GetTeamController::getAllTeams
+  methods: [ GET ]
+
+getTeamById:
+  path: /api/team/{id}
+  controller: App\Controller\Team\GetTeamController::getTeamById
+  methods: [ GET ]
+
+createTeam:
+  path: /api/team
+  controller: App\Controller\Team\CreateTeamController::create
+  methods: [ POST ]
+
+updateTeam:
+  path: /api/team/{id}
+  controller: App\Controller\Team\UpdateTeamController::update
+  methods: [ PUT ]
+
+deleteTeam:
+  path: /api/team/{id}
+  controller: App\Controller\Team\DeleteTeamController::delete
+  methods: [ DELETE ]

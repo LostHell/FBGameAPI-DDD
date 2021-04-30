@@ -1,50 +1,8 @@
-# User routes
-login:
-  path: /login
-  methods: [ POST ]
-
-register:
-  path: /register
-  controller: App\Controller\Player\RegisterPlayerController::register
-  methods: [ POST ]
-
-getAllPlayers:
-  path: /api/player
-  controller: App\Controller\Player\GetPlayerController::getAllPlayers
-  methods: [ GET ]
-
-getById:
-  path: /api/player/{id}
-  controller: App\Controller\Player\GetPlayerController::getById
-  methods: [ GET ]
-
-updatePlayer:
-  path: /api/player/{id}
-  controller: App\Controller\Player\UpdatePlayerController::update
-  methods: [ PUT ]
+# Player routes
+player:
+  resource: 'routes/player/player_routes.yaml'
 
 # Team routes
-getAllTeams:
-  path: /api/team
-  controller: App\Controller\Team\GetTeamController::getAllTeams
-  methods: [ GET ]
-
-getTeamById:
-  path: /api/team/{id}
-  controller: App\Controller\Team\GetTeamController::getTeamById
-  methods: [ GET ]
-
-createTeam:
-  path: /api/team
-  controller: App\Controller\Team\CreateTeamController::create
-  methods: [ POST ]
-
-updateTeam:
-  path: /api/team/{id}
-  controller: App\Controller\Team\UpdateTeamController::update
-  methods: [ PUT ]
-
-deleteTeam:
-  path: /api/team/{id}
-  controller: App\Controller\Team\DeleteTeamController::delete
-  methods: [ DELETE ]
+team:
+  resource: 'routes/team/team_routes.yaml'
+  schemes: [ http ]
