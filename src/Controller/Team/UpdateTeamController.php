@@ -34,9 +34,11 @@ class UpdateTeamController extends AbstractController
                 'logo' => $teamArray['logo']
             ]);
         } catch (Exception $ex) {
-            throw new Exception($ex->getMessage());
+            return new JsonResponse(['message' => $ex->getMessage()],
+                Response::HTTP_NOT_MODIFIED);
         }
 
-        return new JsonResponse($teamData);
+        return new JsonResponse($teamData,
+            Response::HTTP_OK);
     }
 }

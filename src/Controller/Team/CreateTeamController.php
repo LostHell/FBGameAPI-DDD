@@ -39,9 +39,11 @@ class CreateTeamController extends AbstractController
                 ]
             );
         } catch (Exception $ex) {
-            throw new Exception($ex->getMessage());
+            return new JsonResponse(['message' => $ex->getMessage()],
+                Response::HTTP_BAD_REQUEST);
         }
 
-        return new JsonResponse($newTeam);
+        return new JsonResponse($newTeam,
+            Response::HTTP_CREATED);
     }
 }

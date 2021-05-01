@@ -6,3 +6,13 @@ player:
 team:
   resource: 'routes/team/team_routes.yaml'
   schemes: [ http ]
+
+# Guess routes
+guess:
+  resource: 'routes/guess/guess_routes.yaml'
+  schemes: [ http ]
+
+# Game routes
+game:
+  resource: 'routes/game/game_routes.yaml'
+  schemes: [ http ]

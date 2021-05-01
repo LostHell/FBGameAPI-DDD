@@ -8,6 +8,7 @@ use App\Infrastructure\Repository\PlayerRepository;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class PlayerHandler
@@ -16,16 +17,20 @@ class PlayerHandler
 
     private UserPasswordEncoderInterface $encoder;
 
+    private TokenStorageInterface $tokenStorage;
+
     private ErrorHandler $errorHandler;
 
     public function __construct(
         PlayerRepository $playerRepository,
         UserPasswordEncoderInterface $encoder,
+        TokenStorageInterface $tokenStorage,
         ErrorHandler $errorHandler
     )
     {
         $this->playerRepository = $playerRepository;
         $this->encoder = $encoder;
+        $this->tokenStorage = $tokenStorage;
         $this->errorHandler = $errorHandler;
     }
 
@@ -103,9 +108,7 @@ class PlayerHandler
 
         $errors = $this->errorHandler->validate($player);
 
-        if ($errors) {
-            return $errors;
-        }
+        if ($errors) return $errors;
 
         try {
             $this->playerRepository->save($player);
@@ -123,14 +126,15 @@ class PlayerHandler
     }
 
     /**
-     * @param int $id
      * @param array $playerData
      * @return array
      * @throws Exception
      */
-    public function handlerUpdate(int $id, array $playerData): array
+    public function handlerUpdate(array $playerData): array
     {
-        $currentPlayer = $this->playerRepository->findOneBy(['id' => $id]);
+        $currentPlayer = $this->playerRepository->findOneBy(
+            ['username' => $this->tokenStorage->getToken()->getUsername()]
+        );
 
         $currentPlayer->setUsername($playerData['username']);
         $currentPlayer->setEmail($playerData['email']);
@@ -138,9 +142,7 @@ class PlayerHandler
 
         $errors = $this->errorHandler->validate($currentPlayer);
 
-        if ($errors) {
-            return $errors;
-        }
+        if ($errors) return $errors;
 
         try {
             $this->playerRepository->save($currentPlayer);

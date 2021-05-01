@@ -19,26 +19,27 @@ class UpdatePlayerController extends AbstractController
     }
 
     /**
-     * @param int $id
      * @param Request $request
      * @return Response
      * @throws Exception
      */
-    public function update(int $id, Request $request): Response
+    public function update(Request $request): Response
     {
         $playerArray = json_decode($request->getContent(), true);
 
         try {
-            $playerData = $this->handler->handlerUpdate($id, [
+            $playerData = $this->handler->handlerUpdate([
                 "username" => $playerArray['username'],
                 "email" => $playerArray['email'],
                 "avatar" => $playerArray['avatar']
             ]);
 
         } catch (Exception $ex) {
-            throw new Exception($ex->getMessage());
+            return new JsonResponse(['message' => $ex->getMessage()],
+                Response::HTTP_NOT_MODIFIED);
         }
 
-        return new JsonResponse($playerData);
+        return new JsonResponse($playerData,
+            Response::HTTP_OK);
     }
 }

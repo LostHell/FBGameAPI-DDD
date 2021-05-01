@@ -40,9 +40,11 @@ class RegisterPlayerController extends AbstractController
                 ]
             );
         } catch (Exception $ex) {
-            return new JsonResponse($ex->getMessage());
+            return new JsonResponse(['message' => $ex->getMessage()],
+                Response::HTTP_BAD_REQUEST);
         }
 
-        return new JsonResponse($player);
+        return new JsonResponse($player,
+            Response::HTTP_CREATED);
     }
 }

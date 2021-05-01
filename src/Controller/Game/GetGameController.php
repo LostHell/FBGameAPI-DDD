@@ -1,22 +1,22 @@
 <?php
 
-namespace App\Controller\Player;
+namespace App\Controller\Game;
 
-use App\Application\Handler\PlayerHandler;
+use App\Application\Handler\GameHandler;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Class GetPlayerController
- * @package App\Controller\Player
+ * Class GetGameController
+ * @package App\Controller\Game
  */
-class GetPlayerController extends AbstractController
+class GetGameController extends AbstractController
 {
-    private PlayerHandler $handler;
+    private GameHandler $handler;
 
-    public function __construct(PlayerHandler $handler)
+    public function __construct(GameHandler $handler)
     {
         $this->handler = $handler;
     }
@@ -25,16 +25,16 @@ class GetPlayerController extends AbstractController
      * @return Response
      * @throws Exception
      */
-    public function getAllPlayers(): Response
+    public function getAllGames(): Response
     {
         try {
-            $players = $this->handler->handlerGetAllPlayers();
+            $games = $this->handler->handlerGetAllGames();
         } catch (Exception $ex) {
             return new JsonResponse(['message' => $ex->getMessage()],
                 Response::HTTP_NOT_FOUND);
         }
 
-        return new JsonResponse($players->toArray(),
+        return new JsonResponse($games->toArray(),
             Response::HTTP_OK);
     }
 
@@ -43,16 +43,16 @@ class GetPlayerController extends AbstractController
      * @return Response
      * @throws Exception
      */
-    public function getById(int $id): Response
+    public function getGameById(int $id): Response
     {
         try {
-            $player = $this->handler->handlerGetById($id);
+            $game = $this->handler->handlerGetGameById($id);
         } catch (Exception $ex) {
             return new JsonResponse(['message' => $ex->getMessage()],
                 Response::HTTP_NOT_FOUND);
         }
 
-        return new JsonResponse($player,
+        return new JsonResponse($game,
             Response::HTTP_OK);
     }
 }

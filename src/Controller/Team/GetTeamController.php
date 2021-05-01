@@ -26,10 +26,12 @@ class GetTeamController extends AbstractController
         try {
             $teams = $this->handler->handlerGetAllTeams();
         } catch (Exception $ex) {
-            throw new Exception($ex->getMessage());
+            return new JsonResponse(['message' => $ex->getMessage()],
+                Response::HTTP_NOT_FOUND);
         }
 
-        return new JsonResponse($teams->toArray());
+        return new JsonResponse($teams->toArray(),
+            Response::HTTP_OK);
     }
 
     /**
@@ -42,9 +44,11 @@ class GetTeamController extends AbstractController
         try {
             $team = $this->handler->handlerGetById($id);
         } catch (Exception $ex) {
-            throw new Exception($ex->getMessage());
+            return new JsonResponse(['message' => $ex->getMessage()],
+                Response::HTTP_NOT_FOUND);
         }
 
-        return new JsonResponse($team);
+        return new JsonResponse($team,
+            Response::HTTP_OK);
     }
 }

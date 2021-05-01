@@ -12,4 +12,15 @@ class GameRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Game::class);
     }
+
+    /**
+     * @param Game $game
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function save(Game $game)
+    {
+        $this->_em->persist($game);
+        $this->_em->flush();
+    }
 }

@@ -1,0 +1,14 @@
+getAllGames:
+  path: /api/game
+  controller: App\Controller\Game\GetGameController::getAllGames
+  methods: [ GET ]
+
+getGameById:
+  path: /api/game/{id}
+  controller: App\Controller\Game\GetGameController::getGameById
+  methods: [ GET ]
+
+createGame:
+  path: /api/game
+  controller: App\Controller\Game\CreateGameController::create
+  methods: [ POST ]

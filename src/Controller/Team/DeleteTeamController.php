@@ -27,9 +27,11 @@ class DeleteTeamController extends AbstractController
         try {
             $team = $this->handler->handlerDeleteTeam($id);
         } catch (Exception $ex) {
-            throw new Exception($ex->getMessage());
+            return new JsonResponse(['message' => $ex->getMessage()],
+                Response::HTTP_BAD_REQUEST);
         }
 
-        return new JsonResponse($team);
+        return new JsonResponse($team,
+            Response::HTTP_OK);
     }
 }

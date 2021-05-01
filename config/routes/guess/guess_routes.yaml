@@ -1,0 +1,4 @@
+getAllGuesses:
+  path: /api/guess
+  controller: App\Controller\Guess\GetGuessController::getAllGuesses
+  methods: [ GET ]
