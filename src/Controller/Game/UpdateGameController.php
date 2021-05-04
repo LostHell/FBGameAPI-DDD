@@ -9,11 +9,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * Class CreateGameController
- * @package App\Controller\Game
- */
-class CreateGameController extends AbstractController
+class UpdateGameController extends AbstractController
 {
     private GameHandler $handler;
 
@@ -22,29 +18,25 @@ class CreateGameController extends AbstractController
         $this->handler = $handler;
     }
 
-    /**
-     * @param Request $request
-     * @return Response
-     */
-    public function create(Request $request): Response
+    public function update(int $id, Request $request): Response
     {
         $game = json_decode($request->getContent(), true);
 
         try {
-            $newGame = $this->handler->handlerCreateGame(
+            $currentGame = $this->handler->handlerUpdateGame($id,
                 [
                     'homeTeamId' => $game['homeTeamId'],
                     'awayTeamId' => $game['awayTeamId'],
                     'gameTime' => $game['gameTime'],
-                    'score' => $game['score'],
+                    'score' => $game['score']
                 ]
             );
         } catch (Exception $ex) {
-            return new JsonResponse($ex->getMessage(),
-                Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(['message' => $ex->getMessage()],
+                Response::HTTP_NOT_MODIFIED);
         }
 
-        return new JsonResponse($newGame,
-            Response::HTTP_CREATED);
+        return new JsonResponse($currentGame,
+            Response::HTTP_OK);
     }
 }

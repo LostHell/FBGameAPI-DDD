@@ -12,3 +12,8 @@ createGame:
   path: /api/game
   controller: App\Controller\Game\CreateGameController::create
   methods: [ POST ]
+
+updateGame:
+  path: /api/game/{id}
+  controller: App\Controller\Game\UpdateGameController::update
+  methods: [ PUT ]

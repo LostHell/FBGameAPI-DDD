@@ -112,9 +112,7 @@ class TeamHandler
 
         $errors = $this->errorHandler->validate($currentTeam);
 
-        if ($errors) {
-            return $errors;
-        }
+        if ($errors) return $errors;
 
         try {
             $this->teamRepository->save($currentTeam);

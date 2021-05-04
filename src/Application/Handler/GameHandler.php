@@ -5,6 +5,8 @@ namespace App\Application\Handler;
 use App\Application\ErrorHandler\ErrorHandler;
 use App\Domain\Game\Game;
 use App\Infrastructure\Repository\GameRepository;
+use App\Infrastructure\Repository\TeamRepository;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -13,14 +15,18 @@ class GameHandler
 {
     private GameRepository $gameRepository;
 
+    private TeamRepository $teamRepository;
+
     private ErrorHandler $errorHandler;
 
     public function __construct(
         GameRepository $gameRepository,
+        TeamRepository $teamRepository,
         ErrorHandler $errorHandler
     )
     {
         $this->gameRepository = $gameRepository;
+        $this->teamRepository = $teamRepository;
         $this->errorHandler = $errorHandler;
     }
 
@@ -86,9 +92,12 @@ class GameHandler
     {
         $game = new Game();
 
-        $game->setHomeTeam($gameArray['homeTeam']);
-        $game->setAwayTeam($gameArray['awayTeam']);
-        $game->setGameTime($gameArray['gameTime']);
+        $homeTeam = $this->teamRepository->findOneBy(['id' => $gameArray['homeTeamId']]);
+        $awayTeam = $this->teamRepository->findOneBy(['id' => $gameArray['awayTeamId']]);
+
+        $game->setHomeTeam($homeTeam);
+        $game->setAwayTeam($awayTeam);
+        $game->setGameTime(new DateTimeImmutable($gameArray['gameTime']));
         $game->setScore($gameArray['score']);
 
         $errors = $this->errorHandler->validate($game);
@@ -104,8 +113,44 @@ class GameHandler
         return [
             'homeTeam' => $game->getHomeTeam()->getName(),
             'awayTeam' => $game->getAwayTeam()->getName(),
-            'gameTime' => $game->getGameTime(),
+            'gameTime' => $game->getGameTime()->format('H:i:s, d M Y'),
             'score' => $game->getScore(),
+        ];
+    }
+
+    /**
+     * @param int $id
+     * @param array $gameArray
+     * @return array
+     * @throws Exception
+     */
+    public function handlerUpdateGame(int $id, array $gameArray): array
+    {
+        $currentGame = $this->gameRepository->findOneBy(['id' => $id]);
+
+        $homeTeam = $this->teamRepository->findOneBy(['id' => $gameArray['homeTeamId']]);
+        $awayTeam = $this->teamRepository->findOneBy(['id' => $gameArray['awayTeamId']]);
+
+        $currentGame->setHomeTeam($homeTeam);
+        $currentGame->setAwayTeam($awayTeam);
+        $currentGame->setGameTime(New DateTimeImmutable($gameArray['gameTime']));
+        $currentGame->setScore($gameArray['score']);
+
+        $errors = $this->errorHandler->validate($currentGame);
+
+        if ($errors) return $errors;
+
+        try {
+            $this->gameRepository->save($currentGame);
+        } catch (Exception $ex) {
+            throw new Exception($ex->getMessage());
+        }
+
+        return [
+            'homeTeam' => $currentGame->getHomeTeam()->getName(),
+            'awayTeam' => $currentGame->getAwayTeam()->getName(),
+            'gameTime' => $currentGame->getGameTime()->format('H:i:s, d M Y'),
+            'score' => $currentGame->getScore()
         ];
     }
 }
